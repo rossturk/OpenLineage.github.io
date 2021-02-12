@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"io.openlineage.client","c":"OpenLineage","l":"OpenLineage()","url":"%3Cinit%3E()"}]
