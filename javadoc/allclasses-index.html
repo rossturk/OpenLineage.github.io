@@ -19,7 +19,13 @@
 <script type="text/javascript" src="script-dir/jquery-ui.js"></script>
 </head>
 <body class="all-classes-index">
-<script type="text/javascript">var pathtoroot = "./";
+<script type="text/javascript">var data = {"i0":2,"i1":1,"i2":2,"i3":2,"i4":2,"i5":2,"i6":2,"i7":2,"i8":2,"i9":2,"i10":2,"i11":2,"i12":2,"i13":2,"i14":2,"i15":2,"i16":2,"i17":2,"i18":2,"i19":2,"i20":2};
+var tabs = {65535:["t0","All Classes"],1:["t1","Interface Summary"],2:["t2","Class Summary"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
+var pathtoroot = "./";
 loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -68,8 +74,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </div>
 <div class="allClassesContainer">
 <div class="typeSummary">
-<table>
-<caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<div role="tablist" aria-orientation="horizontal"><button role="tab" aria-selected="true" aria-controls="typeSummary_tabpanel" tabindex="0" onkeydown="switchTab(event)" id="t0" class="activeTableTab">All Classes</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t1" class="tableTab" onclick="show(1);">Interface Summary</button><button role="tab" aria-selected="false" aria-controls="typeSummary_tabpanel" tabindex="-1" onkeydown="switchTab(event)" id="t2" class="tableTab" onclick="show(2);">Class Summary</button></div>
+<div id="typeSummary_tabpanel" role="tabpanel">
+<table aria-labelledby="t0">
 <thead>
 <tr>
 <th class="colFirst" scope="col">Class</th>
@@ -81,8 +88,89 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <td class="colFirst"><a href="io/openlineage/client/OpenLineage.html" title="class in io.openlineage.client">OpenLineage</a></td>
 <th class="colLast" scope="row">&nbsp;</th>
 </tr>
+<tr class="rowColor" id="i1">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.BaseFacet.html" title="interface in io.openlineage.client">OpenLineage.BaseFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i2">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.CustomFacet.html" title="class in io.openlineage.client">OpenLineage.CustomFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i3">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.Dataset.html" title="class in io.openlineage.client">OpenLineage.Dataset</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i4">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.DatasetFacets.html" title="class in io.openlineage.client">OpenLineage.DatasetFacets</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i5">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.DatasourceDatasetFacet.html" title="class in io.openlineage.client">OpenLineage.DatasourceDatasetFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i6">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.DocumentationDatasetFacet.html" title="class in io.openlineage.client">OpenLineage.DocumentationDatasetFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i7">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.DocumentationJobFacet.html" title="class in io.openlineage.client">OpenLineage.DocumentationJobFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i8">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.Job.html" title="class in io.openlineage.client">OpenLineage.Job</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i9">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.JobFacets.html" title="class in io.openlineage.client">OpenLineage.JobFacets</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i10">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.NominalTimeRunFacet.html" title="class in io.openlineage.client">OpenLineage.NominalTimeRunFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i11">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.ParentRunFacet.html" title="class in io.openlineage.client">OpenLineage.ParentRunFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i12">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.ParentRunFacetJob.html" title="class in io.openlineage.client">OpenLineage.ParentRunFacetJob</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i13">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.ParentRunFacetRun.html" title="class in io.openlineage.client">OpenLineage.ParentRunFacetRun</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i14">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.Run.html" title="class in io.openlineage.client">OpenLineage.Run</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i15">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.RunFacets.html" title="class in io.openlineage.client">OpenLineage.RunFacets</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i16">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.RunStateUpdate.html" title="class in io.openlineage.client">OpenLineage.RunStateUpdate</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i17">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.SchemaDatasetFacet.html" title="class in io.openlineage.client">OpenLineage.SchemaDatasetFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i18">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.SchemaDatasetFacetFields.html" title="class in io.openlineage.client">OpenLineage.SchemaDatasetFacetFields</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="rowColor" id="i19">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.SourceCodeLocationJobFacet.html" title="class in io.openlineage.client">OpenLineage.SourceCodeLocationJobFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
+<tr class="altColor" id="i20">
+<td class="colFirst"><a href="io/openlineage/client/OpenLineage.SQLJobFacet.html" title="class in io.openlineage.client">OpenLineage.SQLJobFacet</a></td>
+<th class="colLast" scope="row">&nbsp;</th>
+</tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </main>
