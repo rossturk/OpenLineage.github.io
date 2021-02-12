@@ -842,7 +842,7 @@ ul.nav-tabs {
     // Script section to load models into a JS Var
     var defs = {}
     defs["BaseFacet"] = {
-  "required" : [ "producer", "schemaURL" ],
+  "required" : [ "_producer", "_schemaURL" ],
   "type" : "object",
   "properties" : {
     "_producer" : {
@@ -861,6 +861,7 @@ ul.nav-tabs {
   "description" : "all fields of the base facet are prefixed with _ to avoid name conflicts in facets"
 };
     defs["CustomFacet"] = {
+  "type" : "object",
   "description" : "a Custom Facet is defined is a separate spec. field must not start with _",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
@@ -904,6 +905,7 @@ ul.nav-tabs {
   }
 };
     defs["DatasourceDatasetFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -922,6 +924,7 @@ ul.nav-tabs {
   }
 };
     defs["DocumentationDatasetFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -939,6 +942,7 @@ ul.nav-tabs {
   }
 };
     defs["DocumentationJobFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -989,6 +993,7 @@ ul.nav-tabs {
   }
 };
     defs["NominalTimeRunFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -1013,6 +1018,7 @@ ul.nav-tabs {
   }
 };
     defs["ParentRunFacet"] = {
+  "type" : "object",
   "description" : "the id of the parent run and job, iff this run was spawn from an other run (for example, the Dag run scheduling its tasks)",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
@@ -1027,19 +1033,22 @@ ul.nav-tabs {
       "$ref" : "#/components/schemas/ParentRunFacet_allOf_run"
     },
     "job" : {
-      "required" : [ "name", "namespace" ],
-      "properties" : {
-        "namespace" : {
-          "type" : "string",
-          "description" : "The namespace containing that job",
-          "example" : "my-scheduler-namespace"
-        },
-        "name" : {
-          "type" : "string",
-          "description" : "The unique name for that job within that namespace",
-          "example" : "myjob.mytask"
-        }
-      }
+      "$ref" : "#/components/schemas/ParentRunFacet_allOf_job"
+    }
+  }
+};
+    defs["ParentRunFacet_allOf_job"] = {
+  "required" : [ "name", "namespace" ],
+  "properties" : {
+    "namespace" : {
+      "type" : "string",
+      "description" : "The namespace containing that job",
+      "example" : "my-scheduler-namespace"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "The unique name for that job within that namespace",
+      "example" : "myjob.mytask"
     }
   }
 };
@@ -1047,8 +1056,7 @@ ul.nav-tabs {
   "required" : [ "runId" ],
   "properties" : {
     "runId" : {
-      "type" : "string",
-      "format" : "uuid"
+      "type" : "string"
     }
   }
 };
@@ -1121,6 +1129,7 @@ ul.nav-tabs {
   }
 };
     defs["SQLJobFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -1137,6 +1146,7 @@ ul.nav-tabs {
   }
 };
     defs["SchemaDatasetFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -1174,6 +1184,7 @@ ul.nav-tabs {
   }
 };
     defs["SourceCodeLocationJobFacet"] = {
+  "type" : "object",
   "allOf" : [ {
     "$ref" : "#/components/schemas/BaseFacet"
   }, {
@@ -1181,6 +1192,7 @@ ul.nav-tabs {
   } ]
 };
     defs["SourceCodeLocationJobFacet_allOf"] = {
+  "required" : [ "type", "url" ],
   "properties" : {
     "type" : {
       "type" : "string",
