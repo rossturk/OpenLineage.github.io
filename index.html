@@ -157,29 +157,34 @@ h={};g()}};typeof define==="function"&&define.amd&&define("google-code-prettify"
     });
 
     function findNode(id, currentNode) {
-        return (Object.keys(currentNode)[0] === id) ? currentNode : findNodeInChildren(id, currentNode);
-    }
+        var currentChild,
+            result;
 
-    function findNodeInChildren(id, currentNode) {
-        for (let prop in currentNode) {
-            if (currentNode.hasOwnProperty(prop)) {
-                let currentChild = currentNode[prop];
-                if (id === prop) {
-                    return currentChild;
-                } else {
-                    // Search in the current child
-                    if (typeof (currentChild) === 'object') {
-                        let result = findNode(id, currentChild);
-                        if (result !== false) {
-                            return result;
+        if ( Object.keys(currentNode)[0] == id) {
+            return currentNode;
+        } else {
+            // Use a for loop instead of forEach to avoid nested functions
+            // Otherwise "return" will not work properly
+            for(var propt in currentNode){
+                if (currentNode.hasOwnProperty(propt)) {
+                    currentChild = currentNode[propt]
+                    if (id == propt) {
+                        return currentChild;
+                    } else {
+                        // Search in the current child
+                        if (typeof(currentChild) === 'object') {
+                            result = findNode(id, currentChild);
+                            if (result != false) {
+                                return result;
+                            }
                         }
                     }
                 }
             }
+            // The node has not been found and we have no more options
+           return false;
         }
-        return false;
     }
-
   </script>
   <style type="text/css">
     @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
@@ -853,9 +858,9 @@ ul.nav-tabs {
     },
     "_schemaURL" : {
       "type" : "string",
-      "description" : "The URL to the corresponding version of the schema definition following a $ref URL Reference (see https://swagger.io/docs/specification/using-ref/)",
+      "description" : "The JSON Pointer (https://tools.ietf.org/html/rfc6901) URL to the corresponding version of the schema definition for this facet",
       "format" : "uri",
-      "example" : "https://github.com/OpenLineage/OpenLineage/blob/v1-0-0/spec/OpenLineage.yml#MyCustomJobFacet"
+      "example" : "https://raw.githubusercontent.com/OpenLineage/OpenLineage/0.0.1/spec/OpenLineage.json#/definitions/BaseFacet"
     }
   },
   "description" : "all fields of the base facet are prefixed with _ to avoid name conflicts in facets"
@@ -913,6 +918,7 @@ ul.nav-tabs {
   } ]
 };
     defs["DatasourceDatasetFacet_allOf"] = {
+  "type" : "object",
   "properties" : {
     "name" : {
       "type" : "string"
@@ -933,6 +939,7 @@ ul.nav-tabs {
 };
     defs["DocumentationDatasetFacet_allOf"] = {
   "required" : [ "description" ],
+  "type" : "object",
   "properties" : {
     "description" : {
       "type" : "string",
@@ -951,10 +958,33 @@ ul.nav-tabs {
 };
     defs["DocumentationJobFacet_allOf"] = {
   "required" : [ "description" ],
+  "type" : "object",
   "properties" : {
     "description" : {
       "type" : "string",
       "description" : "The description of the job."
+    }
+  }
+};
+    defs["InputDataset"] = {
+  "type" : "object",
+  "description" : "An input dataset",
+  "allOf" : [ {
+    "$ref" : "#/components/schemas/Dataset"
+  }, {
+    "$ref" : "#/components/schemas/InputDataset_allOf"
+  } ]
+};
+    defs["InputDataset_allOf"] = {
+  "type" : "object",
+  "properties" : {
+    "inputFacets" : {
+      "type" : "object",
+      "properties" : { },
+      "additionalProperties" : {
+        "$ref" : "#/components/schemas/CustomFacet"
+      },
+      "description" : "The input facets for this dataset."
     }
   }
 };
@@ -1002,6 +1032,7 @@ ul.nav-tabs {
 };
     defs["NominalTimeRunFacet_allOf"] = {
   "required" : [ "nominalStartTime" ],
+  "type" : "object",
   "properties" : {
     "nominalStartTime" : {
       "type" : "string",
@@ -1017,6 +1048,28 @@ ul.nav-tabs {
     }
   }
 };
+    defs["OutputDataset"] = {
+  "type" : "object",
+  "description" : "An output dataset",
+  "allOf" : [ {
+    "$ref" : "#/components/schemas/Dataset"
+  }, {
+    "$ref" : "#/components/schemas/OutputDataset_allOf"
+  } ]
+};
+    defs["OutputDataset_allOf"] = {
+  "type" : "object",
+  "properties" : {
+    "outputFacets" : {
+      "type" : "object",
+      "properties" : { },
+      "additionalProperties" : {
+        "$ref" : "#/components/schemas/CustomFacet"
+      },
+      "description" : "The output facets for this dataset"
+    }
+  }
+};
     defs["ParentRunFacet"] = {
   "type" : "object",
   "description" : "the id of the parent run and job, iff this run was spawn from an other run (for example, the Dag run scheduling its tasks)",
@@ -1028,6 +1081,7 @@ ul.nav-tabs {
 };
     defs["ParentRunFacet_allOf"] = {
   "required" : [ "job", "run" ],
+  "type" : "object",
   "properties" : {
     "run" : {
       "$ref" : "#/components/schemas/ParentRunFacet_allOf_run"
@@ -1039,6 +1093,7 @@ ul.nav-tabs {
 };
     defs["ParentRunFacet_allOf_job"] = {
   "required" : [ "name", "namespace" ],
+  "type" : "object",
   "properties" : {
     "namespace" : {
       "type" : "string",
@@ -1054,6 +1109,7 @@ ul.nav-tabs {
 };
     defs["ParentRunFacet_allOf_run"] = {
   "required" : [ "runId" ],
+  "type" : "object",
   "properties" : {
     "runId" : {
       "type" : "string"
@@ -1085,7 +1141,7 @@ ul.nav-tabs {
     }
   }
 };
-    defs["RunStateUpdate"] = {
+    defs["RunEvent"] = {
   "required" : [ "eventTime", "job", "producer", "run" ],
   "type" : "object",
   "properties" : {
@@ -1110,14 +1166,14 @@ ul.nav-tabs {
       "type" : "array",
       "description" : "The set of **input** datasets.",
       "items" : {
-        "$ref" : "#/components/schemas/Dataset"
+        "$ref" : "#/components/schemas/InputDataset"
       }
     },
     "outputs" : {
       "type" : "array",
       "description" : "The set of **output** datasets.",
       "items" : {
-        "$ref" : "#/components/schemas/Dataset"
+        "$ref" : "#/components/schemas/OutputDataset"
       }
     },
     "producer" : {
@@ -1138,6 +1194,7 @@ ul.nav-tabs {
 };
     defs["SQLJobFacet_allOf"] = {
   "required" : [ "query" ],
+  "type" : "object",
   "properties" : {
     "query" : {
       "type" : "string",
@@ -1154,6 +1211,7 @@ ul.nav-tabs {
   } ]
 };
     defs["SchemaDatasetFacet_allOf"] = {
+  "type" : "object",
   "properties" : {
     "fields" : {
       "type" : "array",
@@ -1166,6 +1224,7 @@ ul.nav-tabs {
 };
     defs["SchemaDatasetFacet_allOf_fields"] = {
   "required" : [ "name", "type" ],
+  "type" : "object",
   "properties" : {
     "name" : {
       "type" : "string",
@@ -1193,6 +1252,7 @@ ul.nav-tabs {
 };
     defs["SourceCodeLocationJobFacet_allOf"] = {
   "required" : [ "type", "url" ],
+  "type" : "object",
   "properties" : {
     "type" : {
       "type" : "string",
@@ -1223,8 +1283,8 @@ ul.nav-tabs {
             <li class="nav-fixed nav-header active" data-group="_"><a href="#api-_">API Summary</a></li>
 
                   <li class="nav-header" data-group="OpenLineage"><a href="#api-OpenLineage">API Methods - OpenLineage</a></li>
-                    <li data-group="OpenLineage" data-name="postRunStateUpdate" class="">
-                      <a href="#api-OpenLineage-postRunStateUpdate">postRunStateUpdate</a>
+                    <li data-group="OpenLineage" data-name="postRunEvent" class="">
+                      <a href="#api-OpenLineage-postRunEvent">postRunEvent</a>
                     </li>
           </ul>
         </nav>
@@ -1249,10 +1309,10 @@ ul.nav-tabs {
         <div id="sections">
                 <section id="api-OpenLineage">
                   <h1>OpenLineage</h1>
-                    <div id="api-OpenLineage-postRunStateUpdate">
-                      <article id="api-OpenLineage-postRunStateUpdate-0" data-group="User" data-name="postRunStateUpdate" data-version="0">
+                    <div id="api-OpenLineage-postRunEvent">
+                      <article id="api-OpenLineage-postRunEvent-0" data-group="User" data-name="postRunEvent" data-version="0">
                         <div class="pull-left">
-                          <h1>postRunStateUpdate</h1>
+                          <h1>postRunEvent</h1>
                           <p>Send an event related to the state of a run</p>
                         </div>
                         <div class="pull-right"></div>
@@ -1266,25 +1326,27 @@ ul.nav-tabs {
                           <h3>Usage and SDK Samples</h3>
                         </p>
                         <ul class="nav nav-tabs nav-tabs-examples">
-                          <li class="active"><a href="#examples-OpenLineage-postRunStateUpdate-0-curl">Curl</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-java">Java</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-android">Android</a></li>
-                          <!--<li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-groovy">Groovy</a></li>-->
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-objc">Obj-C</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-javascript">JavaScript</a></li>
-                          <!--<li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-angular">Angular</a></li>-->
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-csharp">C#</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-php">PHP</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-perl">Perl</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-python">Python</a></li>
-                          <li class=""><a href="#examples-OpenLineage-postRunStateUpdate-0-rust">Rust</a></li>
+                          <li class="active"><a href="#examples-OpenLineage-postRunEvent-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-java">Java</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-OpenLineage-postRunEvent-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-OpenLineage-postRunEvent-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-python">Python</a></li>
+                          <li class=""><a href="#examples-OpenLineage-postRunEvent-0-rust">Rust</a></li>
                         </ul>
 
                         <div class="tab-content">
-                          <div class="tab-pane active" id="examples-OpenLineage-postRunStateUpdate-0-curl">
-                            <pre class="prettyprint"><code class="language-bsh">curl -X POST "http://localhost/lineage"</code></pre>
+                          <div class="tab-pane active" id="examples-OpenLineage-postRunEvent-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X POST\
+ -H "Content-Type: application/json"\
+ "http://localhost/lineage"</code></pre>
                           </div>
-                          <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-java">
+                          <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-java">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
 import org.openapitools.client.auth.*;
 import org.openapitools.client.model.*;
@@ -1294,15 +1356,16 @@ import java.io.File;
 import java.util.*;
 
 public class OpenLineageApiExample {
-
     public static void main(String[] args) {
         
+        // Create an instance of the API class
         OpenLineageApi apiInstance = new OpenLineageApi();
-        RunStateUpdate runStateUpdate = ; // RunStateUpdate | 
+        RunEvent runEvent = ; // RunEvent | 
+        
         try {
-            apiInstance.postRunStateUpdate(runStateUpdate);
+            apiInstance.postRunEvent(runEvent);
         } catch (ApiException e) {
-            System.err.println("Exception when calling OpenLineageApi#postRunStateUpdate");
+            System.err.println("Exception when calling OpenLineageApi#postRunEvent");
             e.printStackTrace();
         }
     }
@@ -1310,48 +1373,51 @@ public class OpenLineageApiExample {
 </code></pre>
                           </div>
 
-                          <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-android">
+                          <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-android">
                             <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.OpenLineageApi;
 
 public class OpenLineageApiExample {
-
     public static void main(String[] args) {
         OpenLineageApi apiInstance = new OpenLineageApi();
-        RunStateUpdate runStateUpdate = ; // RunStateUpdate | 
+        RunEvent runEvent = ; // RunEvent | 
+        
         try {
-            apiInstance.postRunStateUpdate(runStateUpdate);
+            apiInstance.postRunEvent(runEvent);
         } catch (ApiException e) {
-            System.err.println("Exception when calling OpenLineageApi#postRunStateUpdate");
+            System.err.println("Exception when calling OpenLineageApi#postRunEvent");
             e.printStackTrace();
         }
     }
 }</code></pre>
                           </div>
   <!--
-  <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-groovy">
+  <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-groovy">
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">RunStateUpdate *runStateUpdate = ; //  (optional)
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">
 
+// Create an instance of the API class
 OpenLineageApi *apiInstance = [[OpenLineageApi alloc] init];
+RunEvent *runEvent = ; //  (optional)
 
 // Send an event related to the state of a run
-[apiInstance postRunStateUpdateWith:runStateUpdate
+[apiInstance postRunEventWith:runEvent
               completionHandler: ^(NSError* error) {
-                            if (error) {
-                                NSLog(@"Error: %@", error);
-                            }
-                        }];
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-javascript">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var OpenLineage = require('open_lineage');
 
+// Create an instance of the API class
 var api = new OpenLineage.OpenLineageApi()
 var opts = {
-  'runStateUpdate':  // {RunStateUpdate} 
+  'runEvent':  // {RunEvent} 
 };
 
 var callback = function(error, data, response) {
@@ -1361,14 +1427,14 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.postRunStateUpdate(opts, callback);
+api.postRunEvent(opts, callback);
 </code></pre>
                             </div>
 
-                            <!--<div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-angular">
+                            <!--<div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-angular">
               <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
             </div>-->
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-csharp">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-csharp">
                               <pre class="prettyprint"><code class="language-cs">using System;
 using System.Diagnostics;
 using Org.OpenAPITools.Api;
@@ -1377,22 +1443,20 @@ using Org.OpenAPITools.Model;
 
 namespace Example
 {
-    public class postRunStateUpdateExample
+    public class postRunEventExample
     {
         public void main()
         {
             
+            // Create an instance of the API class
             var apiInstance = new OpenLineageApi();
-            var runStateUpdate = new RunStateUpdate(); // RunStateUpdate |  (optional) 
+            var runEvent = new RunEvent(); // RunEvent |  (optional) 
 
-            try
-            {
+            try {
                 // Send an event related to the state of a run
-                apiInstance.postRunStateUpdate(runStateUpdate);
-            }
-            catch (Exception e)
-            {
-                Debug.Print("Exception when calling OpenLineageApi.postRunStateUpdate: " + e.Message );
+                apiInstance.postRunEvent(runEvent);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling OpenLineageApi.postRunEvent: " + e.Message );
             }
         }
     }
@@ -1400,65 +1464,67 @@ namespace Example
 </code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-php">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-php">
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\OpenLineageApi();
-$runStateUpdate = ; // RunStateUpdate | 
+$runEvent = ; // RunEvent | 
 
 try {
-    $api_instance->postRunStateUpdate($runStateUpdate);
+    $api_instance->postRunEvent($runEvent);
 } catch (Exception $e) {
-    echo 'Exception when calling OpenLineageApi->postRunStateUpdate: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling OpenLineageApi->postRunEvent: ', $e->getMessage(), PHP_EOL;
 }
 ?></code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-perl">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-perl">
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::OpenLineageApi;
 
+# Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::OpenLineageApi->new();
-my $runStateUpdate = WWW::OPenAPIClient::Object::RunStateUpdate->new(); # RunStateUpdate | 
+my $runEvent = WWW::OPenAPIClient::Object::RunEvent->new(); # RunEvent | 
 
 eval { 
-    $api_instance->postRunStateUpdate(runStateUpdate => $runStateUpdate);
+    $api_instance->postRunEvent(runEvent => $runEvent);
 };
 if ($@) {
-    warn "Exception when calling OpenLineageApi->postRunStateUpdate: $@\n";
+    warn "Exception when calling OpenLineageApi->postRunEvent: $@\n";
 }</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-python">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-python">
                               <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
 import time
 import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
 
-# create an instance of the API class
+# Create an instance of the API class
 api_instance = openapi_client.OpenLineageApi()
-runStateUpdate =  # RunStateUpdate |  (optional)
+runEvent =  # RunEvent |  (optional)
 
 try: 
     # Send an event related to the state of a run
-    api_instance.post_run_state_update(runStateUpdate=runStateUpdate)
+    api_instance.post_run_event(runEvent=runEvent)
 except ApiException as e:
-    print("Exception when calling OpenLineageApi->postRunStateUpdate: %s\n" % e)</code></pre>
+    print("Exception when calling OpenLineageApi->postRunEvent: %s\n" % e)</code></pre>
                             </div>
 
-                            <div class="tab-pane" id="examples-OpenLineage-postRunStateUpdate-0-rust">
+                            <div class="tab-pane" id="examples-OpenLineage-postRunEvent-0-rust">
                               <pre class="prettyprint"><code class="language-rust">extern crate OpenLineageApi;
 
 pub fn main() {
-    let runStateUpdate = ; // RunStateUpdate
+    let runEvent = ; // RunEvent
 
     let mut context = OpenLineageApi::Context::default();
-    let result = client.postRunStateUpdate(runStateUpdate, &context).wait();
-    println!("{:?}", result);
+    let result = client.postRunEvent(runEvent, &context).wait();
 
+    println!("{:?}", result);
 }
 </code></pre>
                             </div>
@@ -1479,7 +1545,7 @@ pub fn main() {
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
-                                <tr><td style="width:150px;">runStateUpdate </td>
+                                <tr><td style="width:150px;">runEvent </td>
 <td>
 <p class="marked"></p>
 <script>
@@ -1488,14 +1554,15 @@ $(document).ready(function() {
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/RunStateUpdate"
+        "$ref" : "#/components/schemas/RunEvent"
       }
     }
   }
 };
-  var schema = findNode('schema', schemaWrapper).schema;
+
+  var schema = findNode('schema',schemaWrapper).schema;
   if (!schema) {
-      schema = schemaWrapper.schema;
+    schema = schemaWrapper.schema;
   }
   if (schema.$ref != null) {
     schema = defsParser.$refs.get(schema.$ref);
@@ -1507,12 +1574,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_postRunStateUpdate_runStateUpdate');
+  var result = $('#d2e199_postRunEvent_runEvent');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_postRunStateUpdate_runStateUpdate"></div>
+<div id="d2e199_postRunEvent_runEvent"></div>
 </td>
 </tr>
 
@@ -1521,27 +1588,27 @@ $(document).ready(function() {
 
 
                           <h2>Responses</h2>
-                            <h3 id="examples-OpenLineage-postRunStateUpdate-title-200"></h3>
-                            <p id="examples-OpenLineage-postRunStateUpdate-description-200" class="marked"></p>
+                            <h3 id="examples-OpenLineage-postRunEvent-title-200"></h3>
+                            <p id="examples-OpenLineage-postRunEvent-description-200" class="marked"></p>
                             <script>
                               var responseOpenLineage200_description = `OK`;
                               var responseOpenLineage200_description_break = responseOpenLineage200_description.indexOf('\n');
                               if (responseOpenLineage200_description_break == -1) {
-                                $("#examples-OpenLineage-postRunStateUpdate-title-200").text("Status: 200 - " + responseOpenLineage200_description);
+                                $("#examples-OpenLineage-postRunEvent-title-200").text("Status: 200 - " + responseOpenLineage200_description);
                               } else {
-                                $("#examples-OpenLineage-postRunStateUpdate-title-200").text("Status: 200 - " + responseOpenLineage200_description.substring(0, responseOpenLineage200_description_break));
-                                $("#examples-OpenLineage-postRunStateUpdate-description-200").html(responseOpenLineage200_description.substring(responseOpenLineage200_description_break));
+                                $("#examples-OpenLineage-postRunEvent-title-200").text("Status: 200 - " + responseOpenLineage200_description.substring(0, responseOpenLineage200_description_break));
+                                $("#examples-OpenLineage-postRunEvent-description-200").html(responseOpenLineage200_description.substring(responseOpenLineage200_description_break));
                               }
                             </script>
 
 
-                            <ul id="responses-detail-OpenLineage-postRunStateUpdate-200" class="nav nav-tabs nav-tabs-examples" >
+                            <ul id="responses-detail-OpenLineage-postRunEvent-200" class="nav nav-tabs nav-tabs-examples" >
 
 
                             </ul>
 
 
-                            <div class="tab-content" id="responses-OpenLineage-postRunStateUpdate-200-wrapper" style='margin-bottom: 10px;'>
+                            <div class="tab-content" id="responses-OpenLineage-postRunEvent-200-wrapper" style='margin-bottom: 10px;'>
                             </div>
                         </article>
                       </div>
