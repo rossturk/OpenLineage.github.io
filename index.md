@@ -30,6 +30,9 @@ A configurable backend allows to choose what protocol to send the events to.
 
 ## Spec
 The [specification](https://github.com/OpenLineage/OpenLineage/blob/main/spec/OpenLineage.md) is defined using OpenAPI and allows extension through custom facets.
+### Generated doc
+- [OpenAPI spec for OpenLineage](openapi)
+- [Javadoc for OpenLineage client](javadoc)
 
 ## Related projects
 - [Marquez](https://marquezproject.ai/): Marquez is an [LF AI & DATA](https://lfaidata.foundation/) project to collect, aggregate, and visualize a data ecosystem's metadata. It is the reference implementation of the OpenLineage API.
